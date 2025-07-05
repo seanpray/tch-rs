@@ -35,6 +35,11 @@ your system. You can either:
 On linux platforms, the build script will look for a system-wide libtorch
 library in `/usr/lib/libtorch.so`.
 
+### Merged PRs in this fork
+- 952: load/save optimizer state values for checkpointing
+- 958: pub flat weights on LSTM/GRU
+- 902: Xavier Init
+
 ### Python PyTorch Install
 
 If the `LIBTORCH_USE_PYTORCH` environment variable is set, the active python
