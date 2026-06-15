@@ -979,6 +979,45 @@ impl Tensor {
         .unwrap()
     }
 
+    pub fn internal_cudnn_attention_backward(
+        grad_out: &Tensor,
+        query: &Tensor,
+        key: &Tensor,
+        value: &Tensor,
+        out: &Tensor,
+        logsumexp: &Tensor,
+        philox_seed: &Tensor,
+        philox_offset: &Tensor,
+        attn_bias: &Tensor,
+        cum_seq_q: &Tensor,
+        cum_seq_k: &Tensor,
+        max_q: i64,
+        max_k: i64,
+        dropout_p: f64,
+        is_causal: bool,
+        scale: impl Into<Option<f64>>,
+    ) -> (Tensor, Tensor, Tensor) {
+        Tensor::f_internal_cudnn_attention_backward(
+            grad_out,
+            query,
+            key,
+            value,
+            out,
+            logsumexp,
+            philox_seed,
+            philox_offset,
+            attn_bias,
+            cum_seq_q,
+            cum_seq_k,
+            max_q,
+            max_k,
+            dropout_p,
+            is_causal,
+            scale,
+        )
+        .unwrap()
+    }
+
     pub fn internal_cudnn_ctc_loss(
         log_probs: &Tensor,
         targets: &Tensor,
@@ -1920,6 +1959,49 @@ impl Tensor {
         .unwrap()
     }
 
+    pub fn internal_flash_attention_forward_no_dropout_inplace<T: Borrow<Tensor>>(
+        out: &Tensor,
+        query: &Tensor,
+        key: &Tensor,
+        value: &Tensor,
+        cum_seq_q: Option<T>,
+        cum_seq_k: Option<T>,
+        max_q: i64,
+        max_k: i64,
+        dropout_p: f64,
+        is_causal: bool,
+        return_debug_mask: bool,
+        scale: impl Into<Option<f64>>,
+        window_size_left: impl Into<Option<i64>>,
+        window_size_right: impl Into<Option<i64>>,
+        seqused_k: Option<T>,
+        alibi_slopes: Option<T>,
+        block_table: Option<T>,
+        num_splits: impl Into<Option<i64>>,
+    ) -> Tensor {
+        Tensor::f_internal_flash_attention_forward_no_dropout_inplace(
+            out,
+            query,
+            key,
+            value,
+            cum_seq_q,
+            cum_seq_k,
+            max_q,
+            max_k,
+            dropout_p,
+            is_causal,
+            return_debug_mask,
+            scale,
+            window_size_left,
+            window_size_right,
+            seqused_k,
+            alibi_slopes,
+            block_table,
+            num_splits,
+        )
+        .unwrap()
+    }
+
     pub fn internal_foobar(&self, arg1: bool, arg2: bool, arg3: bool) -> Tensor {
         self.f_internal_foobar(arg1, arg2, arg3).unwrap()
     }
@@ -2072,13 +2154,13 @@ impl Tensor {
         .unwrap()
     }
 
-    pub fn internal_fused_rms_norm(
+    pub fn internal_fused_rms_norm<T: Borrow<Tensor>>(
         &self,
-        normalized_shape_ndim: i64,
-        weight: &Tensor,
-        eps: f64,
-    ) -> Tensor {
-        self.f_internal_fused_rms_norm(normalized_shape_ndim, weight, eps).unwrap()
+        normalized_shape: impl IntList,
+        weight: Option<T>,
+        eps: impl Into<Option<f64>>,
+    ) -> (Tensor, Tensor) {
+        self.f_internal_fused_rms_norm(normalized_shape, weight, eps).unwrap()
     }
 
     pub fn internal_fused_sdp_choice<T: Borrow<Tensor>>(
@@ -3265,6 +3347,50 @@ impl Tensor {
         self.f_internal_pdist_backward_out(out, grad, p, pdist).unwrap()
     }
 
+    pub fn internal_philox_key_fold_in(key: &Tensor, data: i64) -> Tensor {
+        Tensor::f_internal_philox_key_fold_in(key, data).unwrap()
+    }
+
+    pub fn internal_philox_key_split(key: &Tensor, num_splits: i64) -> Tensor {
+        Tensor::f_internal_philox_key_split(key, num_splits).unwrap()
+    }
+
+    pub fn internal_philox_normal(&self, key: &Tensor, mean: f64, std: f64) -> Tensor {
+        self.f_internal_philox_normal(key, mean, std).unwrap()
+    }
+
+    pub fn internal_philox_normal_(&mut self, key: &Tensor, mean: f64, std: f64) -> Tensor {
+        self.f_internal_philox_normal_(key, mean, std).unwrap()
+    }
+
+    pub fn internal_philox_normal_out(
+        &self,
+        out: &Tensor,
+        key: &Tensor,
+        mean: f64,
+        std: f64,
+    ) -> Tensor {
+        self.f_internal_philox_normal_out(out, key, mean, std).unwrap()
+    }
+
+    pub fn internal_philox_uniform(&self, key: &Tensor, low: f64, high: f64) -> Tensor {
+        self.f_internal_philox_uniform(key, low, high).unwrap()
+    }
+
+    pub fn internal_philox_uniform_(&mut self, key: &Tensor, low: f64, high: f64) -> Tensor {
+        self.f_internal_philox_uniform_(key, low, high).unwrap()
+    }
+
+    pub fn internal_philox_uniform_out(
+        &self,
+        out: &Tensor,
+        key: &Tensor,
+        low: f64,
+        high: f64,
+    ) -> Tensor {
+        self.f_internal_philox_uniform_out(out, key, low, high).unwrap()
+    }
+
     pub fn internal_pin_memory(&self, device: Device) -> Tensor {
         self.f_internal_pin_memory(device).unwrap()
     }
@@ -3397,6 +3523,7 @@ impl Tensor {
         is_causal: bool,
         dropout_mask: Option<T>,
         scale: impl Into<Option<f64>>,
+        enable_gqa: bool,
     ) -> (Tensor, Tensor) {
         Tensor::f_internal_scaled_dot_product_attention_math_for_mps(
             query,
@@ -3407,6 +3534,7 @@ impl Tensor {
             is_causal,
             dropout_mask,
             scale,
+            enable_gqa,
         )
         .unwrap()
     }
@@ -3567,6 +3695,38 @@ impl Tensor {
         .unwrap()
     }
 
+    pub fn internal_scaled_grouped_mm_v2<T: Borrow<Tensor>>(
+        &self,
+        mat2: &Tensor,
+        scale_a: &[T],
+        recipe_a: impl IntList,
+        swizzle_a: impl IntList,
+        scale_b: &[T],
+        recipe_b: impl IntList,
+        swizzle_b: impl IntList,
+        offs: Option<T>,
+        bias: Option<T>,
+        out_dtype: impl Into<Option<Kind>>,
+        contraction_dim: impl IntList,
+        use_fast_accum: bool,
+    ) -> Tensor {
+        self.f_internal_scaled_grouped_mm_v2(
+            mat2,
+            scale_a,
+            recipe_a,
+            swizzle_a,
+            scale_b,
+            recipe_b,
+            swizzle_b,
+            offs,
+            bias,
+            out_dtype,
+            contraction_dim,
+            use_fast_accum,
+        )
+        .unwrap()
+    }
+
     pub fn internal_scaled_mm<T: Borrow<Tensor>>(
         &self,
         mat2: &Tensor,
@@ -3608,6 +3768,68 @@ impl Tensor {
             bias,
             scale_result,
             out_dtype,
+            use_fast_accum,
+        )
+        .unwrap()
+    }
+
+    pub fn internal_scaled_mm_v2<T: Borrow<Tensor>>(
+        &self,
+        mat2: &Tensor,
+        scale_a: &[T],
+        recipe_a: impl IntList,
+        swizzle_a: impl IntList,
+        scale_b: &[T],
+        recipe_b: impl IntList,
+        swizzle_b: impl IntList,
+        bias: Option<T>,
+        out_dtype: impl Into<Option<Kind>>,
+        contraction_dim: impl IntList,
+        use_fast_accum: bool,
+    ) -> Tensor {
+        self.f_internal_scaled_mm_v2(
+            mat2,
+            scale_a,
+            recipe_a,
+            swizzle_a,
+            scale_b,
+            recipe_b,
+            swizzle_b,
+            bias,
+            out_dtype,
+            contraction_dim,
+            use_fast_accum,
+        )
+        .unwrap()
+    }
+
+    pub fn internal_scaled_mm_v2_out<T: Borrow<Tensor>>(
+        &self,
+        out: &Tensor,
+        mat2: &Tensor,
+        scale_a: &[T],
+        recipe_a: impl IntList,
+        swizzle_a: impl IntList,
+        scale_b: &[T],
+        recipe_b: impl IntList,
+        swizzle_b: impl IntList,
+        bias: Option<T>,
+        out_dtype: impl Into<Option<Kind>>,
+        contraction_dim: impl IntList,
+        use_fast_accum: bool,
+    ) -> Tensor {
+        self.f_internal_scaled_mm_v2_out(
+            out,
+            mat2,
+            scale_a,
+            recipe_a,
+            swizzle_a,
+            scale_b,
+            recipe_b,
+            swizzle_b,
+            bias,
+            out_dtype,
+            contraction_dim,
             use_fast_accum,
         )
         .unwrap()
@@ -4926,6 +5148,85 @@ impl Tensor {
             .unwrap()
     }
 
+    pub fn internal_upsample_lanczos2d_aa(
+        &self,
+        output_size: impl IntList,
+        align_corners: bool,
+        scales_h: impl Into<Option<f64>>,
+        scales_w: impl Into<Option<f64>>,
+    ) -> Tensor {
+        self.f_internal_upsample_lanczos2d_aa(output_size, align_corners, scales_h, scales_w)
+            .unwrap()
+    }
+
+    pub fn internal_upsample_lanczos2d_aa_backward(
+        grad_output: &Tensor,
+        output_size: impl IntList,
+        input_size: impl IntList,
+        align_corners: bool,
+        scales_h: impl Into<Option<f64>>,
+        scales_w: impl Into<Option<f64>>,
+    ) -> Tensor {
+        Tensor::f_internal_upsample_lanczos2d_aa_backward(
+            grad_output,
+            output_size,
+            input_size,
+            align_corners,
+            scales_h,
+            scales_w,
+        )
+        .unwrap()
+    }
+
+    pub fn internal_upsample_lanczos2d_aa_backward_grad_input(
+        grad_input: &Tensor,
+        grad_output: &Tensor,
+        output_size: impl IntList,
+        input_size: impl IntList,
+        align_corners: bool,
+        scales_h: impl Into<Option<f64>>,
+        scales_w: impl Into<Option<f64>>,
+    ) -> Tensor {
+        Tensor::f_internal_upsample_lanczos2d_aa_backward_grad_input(
+            grad_input,
+            grad_output,
+            output_size,
+            input_size,
+            align_corners,
+            scales_h,
+            scales_w,
+        )
+        .unwrap()
+    }
+
+    pub fn internal_upsample_lanczos2d_aa_out(
+        &self,
+        out: &Tensor,
+        output_size: impl IntList,
+        align_corners: bool,
+        scales_h: impl Into<Option<f64>>,
+        scales_w: impl Into<Option<f64>>,
+    ) -> Tensor {
+        self.f_internal_upsample_lanczos2d_aa_out(
+            out,
+            output_size,
+            align_corners,
+            scales_h,
+            scales_w,
+        )
+        .unwrap()
+    }
+
+    pub fn internal_upsample_lanczos2d_aa_vec(
+        &self,
+        output_size: impl IntListOption,
+        align_corners: bool,
+        scale_factors: impl DoubleList,
+    ) -> Tensor {
+        self.f_internal_upsample_lanczos2d_aa_vec(output_size, align_corners, scale_factors)
+            .unwrap()
+    }
+
     pub fn internal_upsample_nearest_exact1d(
         &self,
         output_size: impl IntList,
@@ -5152,6 +5453,40 @@ impl Tensor {
 
     pub fn internal_use_cudnn_rnn_flatten_weight() -> bool {
         Tensor::f_internal_use_cudnn_rnn_flatten_weight().unwrap()
+    }
+
+    pub fn internal_use_miopen_ctc_loss(
+        log_probs: &Tensor,
+        targets: &Tensor,
+        input_lengths: impl IntList,
+        target_lengths: impl IntList,
+        blank: i64,
+    ) -> bool {
+        Tensor::f_internal_use_miopen_ctc_loss(
+            log_probs,
+            targets,
+            input_lengths,
+            target_lengths,
+            blank,
+        )
+        .unwrap()
+    }
+
+    pub fn internal_use_miopen_ctc_loss_tensor(
+        log_probs: &Tensor,
+        targets: &Tensor,
+        input_lengths: &Tensor,
+        target_lengths: &Tensor,
+        blank: i64,
+    ) -> bool {
+        Tensor::f_internal_use_miopen_ctc_loss_tensor(
+            log_probs,
+            targets,
+            input_lengths,
+            target_lengths,
+            blank,
+        )
+        .unwrap()
     }
 
     pub fn internal_validate_compressed_sparse_indices(
@@ -8980,70 +9315,6 @@ impl Tensor {
         .unwrap()
     }
 
-    pub fn fbgemm_linear_fp16_weight(&self, packed_weight: &Tensor, bias: &Tensor) -> Tensor {
-        self.f_fbgemm_linear_fp16_weight(packed_weight, bias).unwrap()
-    }
-
-    pub fn fbgemm_linear_fp16_weight_fp32_activation(
-        &self,
-        packed_weight: &Tensor,
-        bias: &Tensor,
-    ) -> Tensor {
-        self.f_fbgemm_linear_fp16_weight_fp32_activation(packed_weight, bias).unwrap()
-    }
-
-    pub fn fbgemm_linear_int8_weight<S: Into<Scalar>>(
-        &self,
-        weight: &Tensor,
-        packed: &Tensor,
-        col_offsets: &Tensor,
-        weight_scale: S,
-        weight_zero_point: S,
-        bias: &Tensor,
-    ) -> Tensor {
-        self.f_fbgemm_linear_int8_weight(
-            weight,
-            packed,
-            col_offsets,
-            weight_scale,
-            weight_zero_point,
-            bias,
-        )
-        .unwrap()
-    }
-
-    pub fn fbgemm_linear_int8_weight_fp32_activation<S: Into<Scalar>>(
-        &self,
-        weight: &Tensor,
-        packed: &Tensor,
-        col_offsets: &Tensor,
-        weight_scale: S,
-        weight_zero_point: S,
-        bias: &Tensor,
-    ) -> Tensor {
-        self.f_fbgemm_linear_int8_weight_fp32_activation(
-            weight,
-            packed,
-            col_offsets,
-            weight_scale,
-            weight_zero_point,
-            bias,
-        )
-        .unwrap()
-    }
-
-    pub fn fbgemm_pack_gemm_matrix_fp16(&self) -> Tensor {
-        self.f_fbgemm_pack_gemm_matrix_fp16().unwrap()
-    }
-
-    pub fn fbgemm_pack_quantized_matrix(&self) -> Tensor {
-        self.f_fbgemm_pack_quantized_matrix().unwrap()
-    }
-
-    pub fn fbgemm_pack_quantized_matrix_kn(&self, k: i64, n: i64) -> Tensor {
-        self.f_fbgemm_pack_quantized_matrix_kn(k, n).unwrap()
-    }
-
     pub fn feature_alpha_dropout(&self, p: f64, train: bool) -> Tensor {
         self.f_feature_alpha_dropout(p, train).unwrap()
     }
@@ -9833,6 +10104,10 @@ impl Tensor {
         self.f_ger_out(out, vec2).unwrap()
     }
 
+    pub fn get_device(&self) -> i64 {
+        self.f_get_device().unwrap()
+    }
+
     pub fn glu(&self, dim: i64) -> Tensor {
         self.f_glu(dim).unwrap()
     }
@@ -10251,6 +10526,20 @@ impl Tensor {
 
     pub fn hardtanh_out(&self, out: &Tensor) -> Tensor {
         self.f_hardtanh_out(out).unwrap()
+    }
+
+    pub fn hash_tensor(&self, dim: impl IntList, keepdim: bool, mode: i64) -> Tensor {
+        self.f_hash_tensor(dim, keepdim, mode).unwrap()
+    }
+
+    pub fn hash_tensor_out(
+        &self,
+        out: &Tensor,
+        dim: impl IntList,
+        keepdim: bool,
+        mode: i64,
+    ) -> Tensor {
+        self.f_hash_tensor_out(out, dim, keepdim, mode).unwrap()
     }
 
     pub fn heaviside(&self, values: &Tensor) -> Tensor {
@@ -12955,6 +13244,73 @@ impl Tensor {
             groups,
             benchmark,
             deterministic,
+        )
+        .unwrap()
+    }
+
+    pub fn miopen_ctc_loss(
+        log_probs: &Tensor,
+        targets: &Tensor,
+        input_lengths: impl IntList,
+        target_lengths: impl IntList,
+        blank: i64,
+        deterministic: bool,
+        zero_infinity: bool,
+    ) -> (Tensor, Tensor) {
+        Tensor::f_miopen_ctc_loss(
+            log_probs,
+            targets,
+            input_lengths,
+            target_lengths,
+            blank,
+            deterministic,
+            zero_infinity,
+        )
+        .unwrap()
+    }
+
+    pub fn miopen_ctc_loss_out(
+        out0: &Tensor,
+        out1: &Tensor,
+        log_probs: &Tensor,
+        targets: &Tensor,
+        input_lengths: impl IntList,
+        target_lengths: impl IntList,
+        blank: i64,
+        deterministic: bool,
+        zero_infinity: bool,
+    ) -> (Tensor, Tensor) {
+        Tensor::f_miopen_ctc_loss_out(
+            out0,
+            out1,
+            log_probs,
+            targets,
+            input_lengths,
+            target_lengths,
+            blank,
+            deterministic,
+            zero_infinity,
+        )
+        .unwrap()
+    }
+
+    pub fn miopen_ctc_loss_tensor(
+        log_probs: &Tensor,
+        targets: &Tensor,
+        input_lengths: &Tensor,
+        target_lengths: &Tensor,
+        blank: i64,
+        deterministic: bool,
+        zero_infinity: bool,
+    ) -> (Tensor, Tensor) {
+        Tensor::f_miopen_ctc_loss_tensor(
+            log_probs,
+            targets,
+            input_lengths,
+            target_lengths,
+            blank,
+            deterministic,
+            zero_infinity,
         )
         .unwrap()
     }
@@ -18064,6 +18420,10 @@ impl Tensor {
             align_to_window,
         )
         .unwrap()
+    }
+
+    pub fn storage_offset(&self) -> i64 {
+        self.f_storage_offset().unwrap()
     }
 
     pub fn g_sub(&self, other: &Tensor) -> Tensor {

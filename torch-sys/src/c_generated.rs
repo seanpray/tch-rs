@@ -670,6 +670,26 @@ extern "C" {
         blank_: i64,
         zero_infinity_: c_int,
     );
+    pub fn atg__cudnn_attention_backward(
+        out__: *mut *mut C_tensor,
+        grad_out_: *mut C_tensor,
+        query_: *mut C_tensor,
+        key_: *mut C_tensor,
+        value_: *mut C_tensor,
+        out_: *mut C_tensor,
+        logsumexp_: *mut C_tensor,
+        philox_seed_: *mut C_tensor,
+        philox_offset_: *mut C_tensor,
+        attn_bias_: *mut C_tensor,
+        cum_seq_q_: *mut C_tensor,
+        cum_seq_k_: *mut C_tensor,
+        max_q_: i64,
+        max_k_: i64,
+        dropout_p_: f64,
+        is_causal_: c_int,
+        scale_v: f64,
+        scale_null: i8,
+    );
     pub fn atg__cudnn_ctc_loss(
         out__: *mut *mut C_tensor,
         log_probs_: *mut C_tensor,
@@ -1205,6 +1225,31 @@ extern "C" {
         window_size_right_v: i64,
         window_size_right_null: i8,
     );
+    pub fn atg__flash_attention_forward_no_dropout_inplace(
+        out__: *mut *mut C_tensor,
+        out_: *mut C_tensor,
+        query_: *mut C_tensor,
+        key_: *mut C_tensor,
+        value_: *mut C_tensor,
+        cum_seq_q_: *mut C_tensor,
+        cum_seq_k_: *mut C_tensor,
+        max_q_: i64,
+        max_k_: i64,
+        dropout_p_: f64,
+        is_causal_: c_int,
+        return_debug_mask_: c_int,
+        scale_v: f64,
+        scale_null: i8,
+        window_size_left_v: i64,
+        window_size_left_null: i8,
+        window_size_right_v: i64,
+        window_size_right_null: i8,
+        seqused_k_: *mut C_tensor,
+        alibi_slopes_: *mut C_tensor,
+        block_table_: *mut C_tensor,
+        num_splits_v: i64,
+        num_splits_null: i8,
+    );
     pub fn atg__foobar(
         out__: *mut *mut C_tensor,
         self_: *mut C_tensor,
@@ -1313,9 +1358,11 @@ extern "C" {
     pub fn atg__fused_rms_norm(
         out__: *mut *mut C_tensor,
         input_: *mut C_tensor,
-        normalized_shape_ndim_: i64,
+        normalized_shape_data: *const i64,
+        normalized_shape_len: c_int,
         weight_: *mut C_tensor,
-        eps_: f64,
+        eps_v: f64,
+        eps_null: i8,
     );
     pub fn atg__fused_sdp_choice(
         query_: *mut C_tensor,
@@ -2175,6 +2222,52 @@ extern "C" {
         p_: f64,
         pdist_: *mut C_tensor,
     );
+    pub fn atg__philox_key_fold_in(out__: *mut *mut C_tensor, key_: *mut C_tensor, data_: i64);
+    pub fn atg__philox_key_split(out__: *mut *mut C_tensor, key_: *mut C_tensor, num_splits_: i64);
+    pub fn atg__philox_normal(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        key_: *mut C_tensor,
+        mean_: f64,
+        std_: f64,
+    );
+    pub fn atg__philox_normal_(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        key_: *mut C_tensor,
+        mean_: f64,
+        std_: f64,
+    );
+    pub fn atg__philox_normal_out(
+        out__: *mut *mut C_tensor,
+        out_: *mut C_tensor,
+        self_: *mut C_tensor,
+        key_: *mut C_tensor,
+        mean_: f64,
+        std_: f64,
+    );
+    pub fn atg__philox_uniform(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        key_: *mut C_tensor,
+        low_: f64,
+        high_: f64,
+    );
+    pub fn atg__philox_uniform_(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        key_: *mut C_tensor,
+        low_: f64,
+        high_: f64,
+    );
+    pub fn atg__philox_uniform_out(
+        out__: *mut *mut C_tensor,
+        out_: *mut C_tensor,
+        self_: *mut C_tensor,
+        key_: *mut C_tensor,
+        low_: f64,
+        high_: f64,
+    );
     pub fn atg__pin_memory(out__: *mut *mut C_tensor, self_: *mut C_tensor, device_: c_int);
     pub fn atg__pin_memory_out(
         out__: *mut *mut C_tensor,
@@ -2303,6 +2396,7 @@ extern "C" {
         dropout_mask_: *mut C_tensor,
         scale_v: f64,
         scale_null: i8,
+        enable_gqa_: c_int,
     );
     pub fn atg__scaled_dot_product_cudnn_attention_backward(
         out__: *mut *mut C_tensor,
@@ -2392,6 +2486,29 @@ extern "C" {
         out_dtype_: c_int,
         use_fast_accum_: c_int,
     );
+    pub fn atg__scaled_grouped_mm_v2(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        mat2_: *mut C_tensor,
+        scale_a_data: *const *mut C_tensor,
+        scale_a_len: c_int,
+        recipe_a_data: *const i64,
+        recipe_a_len: c_int,
+        swizzle_a_data: *const i64,
+        swizzle_a_len: c_int,
+        scale_b_data: *const *mut C_tensor,
+        scale_b_len: c_int,
+        recipe_b_data: *const i64,
+        recipe_b_len: c_int,
+        swizzle_b_data: *const i64,
+        swizzle_b_len: c_int,
+        offs_: *mut C_tensor,
+        bias_: *mut C_tensor,
+        out_dtype_: c_int,
+        contraction_dim_data: *const i64,
+        contraction_dim_len: c_int,
+        use_fast_accum_: c_int,
+    );
     pub fn atg__scaled_mm(
         out__: *mut *mut C_tensor,
         self_: *mut C_tensor,
@@ -2413,6 +2530,51 @@ extern "C" {
         bias_: *mut C_tensor,
         scale_result_: *mut C_tensor,
         out_dtype_: c_int,
+        use_fast_accum_: c_int,
+    );
+    pub fn atg__scaled_mm_v2(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        mat2_: *mut C_tensor,
+        scale_a_data: *const *mut C_tensor,
+        scale_a_len: c_int,
+        recipe_a_data: *const i64,
+        recipe_a_len: c_int,
+        swizzle_a_data: *const i64,
+        swizzle_a_len: c_int,
+        scale_b_data: *const *mut C_tensor,
+        scale_b_len: c_int,
+        recipe_b_data: *const i64,
+        recipe_b_len: c_int,
+        swizzle_b_data: *const i64,
+        swizzle_b_len: c_int,
+        bias_: *mut C_tensor,
+        out_dtype_: c_int,
+        contraction_dim_data: *const i64,
+        contraction_dim_len: c_int,
+        use_fast_accum_: c_int,
+    );
+    pub fn atg__scaled_mm_v2_out(
+        out__: *mut *mut C_tensor,
+        out_: *mut C_tensor,
+        self_: *mut C_tensor,
+        mat2_: *mut C_tensor,
+        scale_a_data: *const *mut C_tensor,
+        scale_a_len: c_int,
+        recipe_a_data: *const i64,
+        recipe_a_len: c_int,
+        swizzle_a_data: *const i64,
+        swizzle_a_len: c_int,
+        scale_b_data: *const *mut C_tensor,
+        scale_b_len: c_int,
+        recipe_b_data: *const i64,
+        recipe_b_len: c_int,
+        swizzle_b_data: *const i64,
+        swizzle_b_len: c_int,
+        bias_: *mut C_tensor,
+        out_dtype_: c_int,
+        contraction_dim_data: *const i64,
+        contraction_dim_len: c_int,
         use_fast_accum_: c_int,
     );
     pub fn atg__scatter_reduce(
@@ -3516,6 +3678,65 @@ extern "C" {
         scale_factors_data: *const f64,
         scale_factors_len: c_int,
     );
+    pub fn atg__upsample_lanczos2d_aa(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        output_size_data: *const i64,
+        output_size_len: c_int,
+        align_corners_: c_int,
+        scales_h_v: f64,
+        scales_h_null: i8,
+        scales_w_v: f64,
+        scales_w_null: i8,
+    );
+    pub fn atg__upsample_lanczos2d_aa_backward(
+        out__: *mut *mut C_tensor,
+        grad_output_: *mut C_tensor,
+        output_size_data: *const i64,
+        output_size_len: c_int,
+        input_size_data: *const i64,
+        input_size_len: c_int,
+        align_corners_: c_int,
+        scales_h_v: f64,
+        scales_h_null: i8,
+        scales_w_v: f64,
+        scales_w_null: i8,
+    );
+    pub fn atg__upsample_lanczos2d_aa_backward_grad_input(
+        out__: *mut *mut C_tensor,
+        grad_input_: *mut C_tensor,
+        grad_output_: *mut C_tensor,
+        output_size_data: *const i64,
+        output_size_len: c_int,
+        input_size_data: *const i64,
+        input_size_len: c_int,
+        align_corners_: c_int,
+        scales_h_v: f64,
+        scales_h_null: i8,
+        scales_w_v: f64,
+        scales_w_null: i8,
+    );
+    pub fn atg__upsample_lanczos2d_aa_out(
+        out__: *mut *mut C_tensor,
+        out_: *mut C_tensor,
+        self_: *mut C_tensor,
+        output_size_data: *const i64,
+        output_size_len: c_int,
+        align_corners_: c_int,
+        scales_h_v: f64,
+        scales_h_null: i8,
+        scales_w_v: f64,
+        scales_w_null: i8,
+    );
+    pub fn atg__upsample_lanczos2d_aa_vec(
+        out__: *mut *mut C_tensor,
+        input_: *mut C_tensor,
+        output_size_data: *const i64,
+        output_size_len: c_int,
+        align_corners_: c_int,
+        scale_factors_data: *const f64,
+        scale_factors_len: c_int,
+    );
     pub fn atg__upsample_nearest_exact1d(
         out__: *mut *mut C_tensor,
         self_: *mut C_tensor,
@@ -3695,6 +3916,22 @@ extern "C" {
         blank_: i64,
     ) -> c_int;
     pub fn atg__use_cudnn_rnn_flatten_weight() -> c_int;
+    pub fn atg__use_miopen_ctc_loss(
+        log_probs_: *mut C_tensor,
+        targets_: *mut C_tensor,
+        input_lengths_data: *const i64,
+        input_lengths_len: c_int,
+        target_lengths_data: *const i64,
+        target_lengths_len: c_int,
+        blank_: i64,
+    ) -> c_int;
+    pub fn atg__use_miopen_ctc_loss_tensor(
+        log_probs_: *mut C_tensor,
+        targets_: *mut C_tensor,
+        input_lengths_: *mut C_tensor,
+        target_lengths_: *mut C_tensor,
+        blank_: i64,
+    ) -> c_int;
     pub fn atg__validate_compressed_sparse_indices(
         is_crow_: c_int,
         compressed_idx_: *mut C_tensor,
@@ -6825,46 +7062,6 @@ extern "C" {
         quant_min_: i64,
         quant_max_: i64,
     );
-    pub fn atg_fbgemm_linear_fp16_weight(
-        out__: *mut *mut C_tensor,
-        input_: *mut C_tensor,
-        packed_weight_: *mut C_tensor,
-        bias_: *mut C_tensor,
-    );
-    pub fn atg_fbgemm_linear_fp16_weight_fp32_activation(
-        out__: *mut *mut C_tensor,
-        input_: *mut C_tensor,
-        packed_weight_: *mut C_tensor,
-        bias_: *mut C_tensor,
-    );
-    pub fn atg_fbgemm_linear_int8_weight(
-        out__: *mut *mut C_tensor,
-        input_: *mut C_tensor,
-        weight_: *mut C_tensor,
-        packed_: *mut C_tensor,
-        col_offsets_: *mut C_tensor,
-        weight_scale_: *mut C_scalar,
-        weight_zero_point_: *mut C_scalar,
-        bias_: *mut C_tensor,
-    );
-    pub fn atg_fbgemm_linear_int8_weight_fp32_activation(
-        out__: *mut *mut C_tensor,
-        input_: *mut C_tensor,
-        weight_: *mut C_tensor,
-        packed_: *mut C_tensor,
-        col_offsets_: *mut C_tensor,
-        weight_scale_: *mut C_scalar,
-        weight_zero_point_: *mut C_scalar,
-        bias_: *mut C_tensor,
-    );
-    pub fn atg_fbgemm_pack_gemm_matrix_fp16(out__: *mut *mut C_tensor, input_: *mut C_tensor);
-    pub fn atg_fbgemm_pack_quantized_matrix(out__: *mut *mut C_tensor, input_: *mut C_tensor);
-    pub fn atg_fbgemm_pack_quantized_matrix_kn(
-        out__: *mut *mut C_tensor,
-        input_: *mut C_tensor,
-        K_: i64,
-        n_: i64,
-    );
     pub fn atg_feature_alpha_dropout(
         out__: *mut *mut C_tensor,
         input_: *mut C_tensor,
@@ -7709,6 +7906,7 @@ extern "C" {
         self_: *mut C_tensor,
         vec2_: *mut C_tensor,
     );
+    pub fn atg_get_device(self_: *mut C_tensor) -> i64;
     pub fn atg_glu(out__: *mut *mut C_tensor, self_: *mut C_tensor, dim_: i64);
     pub fn atg_glu_backward(
         out__: *mut *mut C_tensor,
@@ -8063,6 +8261,23 @@ extern "C" {
         max_val_: *mut C_scalar,
     );
     pub fn atg_hardtanh_out(out__: *mut *mut C_tensor, out_: *mut C_tensor, self_: *mut C_tensor);
+    pub fn atg_hash_tensor(
+        out__: *mut *mut C_tensor,
+        self_: *mut C_tensor,
+        dim_data: *const i64,
+        dim_len: c_int,
+        keepdim_: c_int,
+        mode_: i64,
+    );
+    pub fn atg_hash_tensor_out(
+        out__: *mut *mut C_tensor,
+        out_: *mut C_tensor,
+        self_: *mut C_tensor,
+        dim_data: *const i64,
+        dim_len: c_int,
+        keepdim_: c_int,
+        mode_: i64,
+    );
     pub fn atg_heaviside(out__: *mut *mut C_tensor, self_: *mut C_tensor, values_: *mut C_tensor);
     pub fn atg_heaviside_(out__: *mut *mut C_tensor, self_: *mut C_tensor, values_: *mut C_tensor);
     pub fn atg_heaviside_out(
@@ -10307,6 +10522,42 @@ extern "C" {
         groups_: i64,
         benchmark_: c_int,
         deterministic_: c_int,
+    );
+    pub fn atg_miopen_ctc_loss(
+        out__: *mut *mut C_tensor,
+        log_probs_: *mut C_tensor,
+        targets_: *mut C_tensor,
+        input_lengths_data: *const i64,
+        input_lengths_len: c_int,
+        target_lengths_data: *const i64,
+        target_lengths_len: c_int,
+        blank_: i64,
+        deterministic_: c_int,
+        zero_infinity_: c_int,
+    );
+    pub fn atg_miopen_ctc_loss_out(
+        out__: *mut *mut C_tensor,
+        out0_: *mut C_tensor,
+        out1_: *mut C_tensor,
+        log_probs_: *mut C_tensor,
+        targets_: *mut C_tensor,
+        input_lengths_data: *const i64,
+        input_lengths_len: c_int,
+        target_lengths_data: *const i64,
+        target_lengths_len: c_int,
+        blank_: i64,
+        deterministic_: c_int,
+        zero_infinity_: c_int,
+    );
+    pub fn atg_miopen_ctc_loss_tensor(
+        out__: *mut *mut C_tensor,
+        log_probs_: *mut C_tensor,
+        targets_: *mut C_tensor,
+        input_lengths_: *mut C_tensor,
+        target_lengths_: *mut C_tensor,
+        blank_: i64,
+        deterministic_: c_int,
+        zero_infinity_: c_int,
     );
     pub fn atg_miopen_depthwise_convolution(
         out__: *mut *mut C_tensor,
@@ -14664,6 +14915,7 @@ extern "C" {
         return_complex_: c_int,
         align_to_window_: c_int,
     );
+    pub fn atg_storage_offset(self_: *mut C_tensor) -> i64;
     pub fn atg_sub(out__: *mut *mut C_tensor, self_: *mut C_tensor, other_: *mut C_tensor);
     pub fn atg_sub_(out__: *mut *mut C_tensor, self_: *mut C_tensor, other_: *mut C_tensor);
     pub fn atg_sub_out(
